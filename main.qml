@@ -52,18 +52,23 @@ Window {
             TextField {
                 id: title
                 Layout.fillWidth: true
+                onEditingFinished: if (text != "") insertMagnitude()
             }
             Button {
                 text: qsTr('Crea')
-                onClicked: {
-                    magnitudes.insertObject({title: title.text});
-                }
+                onClicked: insertMagnitude()
             }
         }
     }
 
+    function insertMagnitude() {
+        if (magnitudes.insertObject({title: title.text}))
+            title.text = "";
+    }
+
     Component.onCompleted: {
         dbBk.createTable('magnitudes','id INTEGER PRIMARY KEY,title TEXT, desc TEXT');
+        dbBk.createTable('measures','id INTEGER PRIMARY KEY,magnitude INTEGER NOT NULL,value TEXT,dateTime TEXT');
         magnitudes.select();
     }
 }

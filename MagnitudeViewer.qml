@@ -15,7 +15,11 @@ Rectangle {
         },
         State {
             name: 'title'
+        },
+        State {
+            name: 'measures'
         }
+
     ]
 
     state: 'title'
@@ -25,11 +29,21 @@ Rectangle {
 
     border.color: 'black'
 
-    height: units.fingerUnit * 2
+    height: rowTitle.height + units.nailUnit * 3 + measures.height
+
+    Behavior on height {
+        PropertyAnimation {
+            duration: 100
+        }
+    }
 
     RowLayout {
-        anchors.fill: parent
+        id: rowTitle
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.margins: units.nailUnit
+        height: units.fingerUnit * 1.5
         Text {
             id: magnitudeTitle
             Layout.fillWidth: true
@@ -39,6 +53,7 @@ Rectangle {
             text: title
             MouseArea {
                 anchors.fill: parent
+                onClicked: magnitudeViewer.state = (magnitudeViewer.state == 'title')?'measures':'title'
                 onPressAndHold: magnitudeViewer.state = 'erase'
             }
         }
@@ -59,5 +74,15 @@ Rectangle {
         }
     }
 
+    MeasuresViewer {
+        id: measures
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: rowTitle.bottom
+        anchors.margins: units.nailUnit
+        height: (magnitudeViewer.state == 'measures')?requiredHeight:0
+        visible: magnitudeViewer.state == 'measures'
+        magnitudeKey: key
+    }
 
 }
