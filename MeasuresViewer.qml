@@ -9,6 +9,17 @@ Rectangle {
     property int requiredHeight: insertButtons.height + measuresList.height
     property int magnitudeKey
 
+    states: [
+        State {
+            name: 'measure'
+        },
+        State {
+            name: 'erase'
+        }
+    ]
+
+    state: 'measure'
+
     SqlTableModel {
         id: measuresModel
         tableName: 'measures'
@@ -26,6 +37,7 @@ Rectangle {
             id: newValue
             Layout.fillHeight: true
             Layout.fillWidth: true
+            onFocusChanged: if (focus) measuresViewer.state = 'measure'
             onEditingFinished: if (text != '') insertMeasure()
         }
         Button {
@@ -47,9 +59,9 @@ Rectangle {
 
         delegate: Rectangle {
             width: measuresList.width
-            height: units.fingerUnit
+            height: units.fingerUnit * 1.5
             border.color: 'black'
-            color: '#BCF5A9'
+            color: '#BEF781'
             RowLayout {
                 anchors.fill: parent
                 anchors.margins: units.nailUnit
@@ -66,7 +78,28 @@ Rectangle {
                     Layout.preferredWidth: contentWidth
                     verticalAlignment: Text.AlignVCenter
                     text: model.dateTime
+                    color: '#848484'
                 }
+                Button {
+                    visible: measuresViewer.state == 'erase'
+                    text: qsTr('Elimina')
+                    onClicked: {
+                        if (measuresModel.removeObjectWithKeyValue(model.id)) {
+                            measuresViewer.state = 'measure';
+                            measuresModel.select();
+                        }
+                    }
+                }
+                Button {
+                    visible: measuresViewer.state == 'erase'
+                    text: qsTr('Cancela')
+                    onClicked: measuresViewer.state = 'measure'
+                }
+            }
+            MouseArea {
+                anchors.fill: parent
+                enabled: measuresViewer.state != 'erase'
+                onPressAndHold: measuresViewer.state = 'erase'
             }
         }
         Component.onCompleted: measuresModel.select()
@@ -74,7 +107,9 @@ Rectangle {
 
     function insertMeasure() {
         var dt = new Date();
-        if (measuresModel.insertObject({value: newValue.text, magnitude: magnitudeKey, dateTime: dt.toISOString()}))
+        if (measuresModel.insertObject({value: newValue.text, magnitude: magnitudeKey, dateTime: dt.toISOString()})) {
             newValue.text = "";
+            newValue.focus = false;
+        }
     }
 }

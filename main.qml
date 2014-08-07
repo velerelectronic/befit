@@ -46,24 +46,32 @@ Window {
                 title: model.title
             }
         }
-        RowLayout {
+        Item {
             Layout.fillWidth: true
             Layout.preferredHeight: units.fingerUnit * 1.5
-            TextField {
-                id: title
-                Layout.fillWidth: true
-                onEditingFinished: if (text != "") insertMagnitude()
-            }
-            Button {
-                text: qsTr('Crea')
-                onClicked: insertMagnitude()
+            RowLayout {
+                anchors.fill: parent
+                TextField {
+                    id: title
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    onEditingFinished: if (text != "") insertMagnitude()
+                }
+                Button {
+                    Layout.fillHeight: true
+                    text: qsTr('Crea')
+                    onClicked: insertMagnitude()
+                }
             }
         }
+
     }
 
     function insertMagnitude() {
-        if (magnitudes.insertObject({title: title.text}))
+        if (magnitudes.insertObject({title: title.text})) {
             title.text = "";
+            title.focus = false;
+        }
     }
 
     Component.onCompleted: {
