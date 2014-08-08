@@ -44,6 +44,18 @@ Window {
                 width: magnitudesList.width
                 key: id
                 title: model.title
+                onStateChanged: {
+                    if (state == 'measures') {
+                        for (var i=0; i<magnitudesList.contentItem.children.length; i++) {
+                            if (i != model.index)
+                                magnitudesList.contentItem.children[i].state = 'title';
+                        }
+                    }
+                }
+
+                onChangeMagnitudeTitle: {
+                    magnitudes.updateObject({id: key, title:title});
+                }
             }
         }
         Item {

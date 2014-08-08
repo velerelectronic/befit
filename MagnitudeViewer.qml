@@ -9,17 +9,21 @@ Rectangle {
     property string title
     property int key
 
+    signal changeMagnitudeTitle(string title)
+
     states: [
-        State {
-            name: 'erase'
-        },
         State {
             name: 'title'
         },
         State {
             name: 'measures'
+        },
+        State {
+            name: 'edit'
+        },
+        State {
+            name: 'erase'
         }
-
     ]
 
     state: 'title'
@@ -28,6 +32,7 @@ Rectangle {
     }
 
     border.color: 'black'
+    color: (magnitudeViewer.state == 'measures')?'yellow':'white'
 
     height: rowTitle.height + units.nailUnit * 3 + measures.height
 
@@ -50,13 +55,58 @@ Rectangle {
             Layout.fillHeight: true
             verticalAlignment: Text.AlignVCenter
             font.pixelSize: units.readUnit
+            color: (magnitudeViewer.state == 'erase')?'blue':'black'
             text: title
+
             MouseArea {
                 anchors.fill: parent
-                onClicked: magnitudeViewer.state = (magnitudeViewer.state == 'title')?'measures':'title'
+                onClicked: {
+                    var nextState = 'title';
+                    switch(magnitudeViewer.state) {
+                    case 'title':
+                        nextState = 'measures';
+                        break;
+                    case 'measures':
+                        nextState = 'title';
+                        break;
+                    case 'edit':
+                        break;
+                    case 'erase':
+                        nextState = 'edit';
+                        break;
+                    }
+
+                    magnitudeViewer.state = nextState;
+                }
                 onPressAndHold: magnitudeViewer.state = 'erase'
             }
+            Item {
+                anchors.fill: parent
+                visible: magnitudeViewer.state == 'edit'
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: units.nailUnit
+                    TextField {
+                        id: newTitle
+                        Layout.fillWidth: true
+                        text: model.title
+                        onAccepted: changeMagnitudeTitle(newTitle.text)
+                    }
+                    Button {
+                        id: changeButton
+                        enabled: (newTitle.text != model.title) && (newTitle.text != "")
+                        text: qsTr('Canvia')
+                        onClicked: changeMagnitudeTitle(newTitle.text)
+                    }
+                    Button {
+                        id: cancelButton
+                        text: qsTr('Cancela')
+                        onClicked: magnitudeViewer.state = 'title'
+                    }
+                }
+            }
         }
+
         Button {
             id: eraseButton
             text: qsTr('Elimina')

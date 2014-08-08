@@ -6,19 +6,10 @@ import PersonalTypes 1.0
 Rectangle {
     id: measuresViewer
     width: 100
-    property int requiredHeight: insertButtons.height + measuresList.height
+    property int requiredHeight: insertButtons.height + measuresList.height + units.nailUnit
     property int magnitudeKey
 
-    states: [
-        State {
-            name: 'measure'
-        },
-        State {
-            name: 'erase'
-        }
-    ]
-
-    state: 'measure'
+    color: 'transparent'
 
     SqlTableModel {
         id: measuresModel
@@ -31,7 +22,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: units.fingerUnit * 1.5
+        height: units.fingerUnit
 
         TextField {
             id: newValue
@@ -53,11 +44,23 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: insertButtons.bottom
+        anchors.topMargin: units.nailUnit
         height: contentItem.height
         interactive: false
         model: measuresModel
 
         delegate: Rectangle {
+            id: singleMeasure
+            states: [
+                State {
+                    name: 'measure'
+                },
+                State {
+                    name: 'erase'
+                }
+            ]
+
+            state: 'measure'
             width: measuresList.width
             height: units.fingerUnit * 1.5
             border.color: 'black'
@@ -65,6 +68,7 @@ Rectangle {
             RowLayout {
                 anchors.fill: parent
                 anchors.margins: units.nailUnit
+                spacing: units.nailUnit
 
                 Text {
                     Layout.fillHeight: true
@@ -75,31 +79,32 @@ Rectangle {
                 }
                 Text {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: contentWidth
+                    Layout.maximumWidth: contentWidth
+                    visible: singleMeasure.state != 'erase'
                     verticalAlignment: Text.AlignVCenter
                     text: model.dateTime
                     color: '#848484'
                 }
                 Button {
-                    visible: measuresViewer.state == 'erase'
+                    visible: singleMeasure.state == 'erase'
                     text: qsTr('Elimina')
                     onClicked: {
                         if (measuresModel.removeObjectWithKeyValue(model.id)) {
-                            measuresViewer.state = 'measure';
+                            singleMeasure.state = 'measure';
                             measuresModel.select();
                         }
                     }
                 }
                 Button {
-                    visible: measuresViewer.state == 'erase'
+                    visible: singleMeasure.state == 'erase'
                     text: qsTr('Cancela')
-                    onClicked: measuresViewer.state = 'measure'
+                    onClicked: singleMeasure.state = 'measure'
                 }
             }
             MouseArea {
                 anchors.fill: parent
-                enabled: measuresViewer.state != 'erase'
-                onPressAndHold: measuresViewer.state = 'erase'
+                enabled: singleMeasure.state != 'erase'
+                onPressAndHold: singleMeasure.state = 'erase'
             }
         }
         Component.onCompleted: measuresModel.select()
