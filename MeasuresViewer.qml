@@ -114,7 +114,7 @@ Rectangle {
         var dt = new Date();
         if (measuresModel.insertObject({value: newValue.text, magnitude: magnitudeKey, dateTime: dt.toISOString()})) {
             newValue.text = "";
-            newValue.focus = false;
+            Qt.inputMethod.hide();
         }
     }
 }

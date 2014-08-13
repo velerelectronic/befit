@@ -8,8 +8,10 @@ Rectangle {
 
     property string title
     property int key
+    property bool isCurrentMagnitude: false
 
     signal changeMagnitudeTitle(string title)
+    signal magnitudeSelected()
 
     states: [
         State {
@@ -61,24 +63,33 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    var nextState = 'title';
-                    switch(magnitudeViewer.state) {
-                    case 'title':
-                        nextState = 'measures';
-                        break;
-                    case 'measures':
-                        nextState = 'title';
-                        break;
-                    case 'edit':
-                        break;
-                    case 'erase':
-                        nextState = 'edit';
-                        break;
+                    if (isCurrentMagnitude) {
+                        var nextState = 'title';
+                        switch(magnitudeViewer.state) {
+                        case 'title':
+                            nextState = 'measures';
+                            break;
+                        case 'measures':
+                            nextState = 'title';
+                            break;
+                        case 'edit':
+                            break;
+                        case 'erase':
+                            nextState = 'edit';
+                            break;
+                        }
+                        magnitudeViewer.state = nextState;
+                    } else {
+                        magnitudeSelected();
                     }
 
-                    magnitudeViewer.state = nextState;
                 }
-                onPressAndHold: magnitudeViewer.state = 'erase'
+                onPressAndHold: {
+                    if (isCurrentMagnitude)
+                        magnitudeViewer.state = 'erase';
+                    else
+                        magnitudeSelected();
+                }
             }
             Item {
                 anchors.fill: parent

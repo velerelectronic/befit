@@ -44,13 +44,15 @@ Window {
                 width: magnitudesList.width
                 key: id
                 title: model.title
-                onStateChanged: {
-                    if (state == 'measures') {
-                        for (var i=0; i<magnitudesList.contentItem.children.length; i++) {
-                            if (i != model.index)
-                                magnitudesList.contentItem.children[i].state = 'title';
-                        }
+                isCurrentMagnitude: ListView.isCurrentItem
+                onMagnitudeSelected: {
+                    magnitudesList.currentIndex = model.index;
+                    for (var i=0; i<magnitudesList.contentItem.children.length; i++) {
+                        if (i != model.index)
+                            magnitudesList.contentItem.children[i].state = 'title';
                     }
+                    magnitudesList.currentItem.state = 'measures';
+                    magnitudesList.positionViewAtIndex(model.index,ListView.Beginning);
                 }
 
                 onChangeMagnitudeTitle: {
@@ -82,7 +84,7 @@ Window {
     function insertMagnitude() {
         if (magnitudes.insertObject({title: title.text})) {
             title.text = "";
-            title.focus = false;
+            Qt.inputMethod.hide();
         }
     }
 
