@@ -21,14 +21,36 @@ DatabaseBackup::DatabaseBackup(QObject *parent) :
 {
 }
 
+
+bool DatabaseBackup::alterTable(const QString &tableName, const QString &columnName, const QString &columnDefinition) {
+    QSqlQueryModel model(this);
+    model.setQuery(QSqlQuery("ALTER TABLE " + tableName + " ADD " + columnName + " " + columnDefinition));
+    qDebug() << model.lastError();
+}
+
+
 bool DatabaseBackup::createTable(const QString &table, const QString &fields) {
     QSqlQueryModel model(this);
     model.setQuery(QSqlQuery("CREATE TABLE IF NOT EXISTS " + table + " (" + fields + ")"));
+    qDebug() << model.lastError();
+}
+
+bool DatabaseBackup::createView(const QString &viewName, const QString &selectStmt) {
+    QSqlQueryModel model(this);
+    model.setQuery(QSqlQuery("DROP VIEW IF EXISTS " + viewName));
+    qDebug() << "CREATE VIEW " + viewName + " AS " + selectStmt;
+    model.setQuery(QSqlQuery("CREATE VIEW " + viewName + " AS " + selectStmt));
+    qDebug() << model.lastError();
 }
 
 bool DatabaseBackup::dropTable(const QString &table) {
     QSqlQueryModel model(this);
     model.setQuery(QSqlQuery("DROP TABLE IF EXISTS " + table));
+}
+
+bool DatabaseBackup::dropView(const QString &viewName) {
+    QSqlQueryModel model(this);
+    model.setQuery(QSqlQuery("DROP VIEW IF EXISTS " + viewName));
 }
 
 const QString &DatabaseBackup::homePath() {

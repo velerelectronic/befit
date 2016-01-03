@@ -14,7 +14,11 @@ Rectangle {
     SqlTableModel {
         id: measuresModel
         tableName: 'measures'
-        filters: [ "magnitude = '" +magnitudeKey+ "'" ]
+        fieldNames: ['id','magnitude','value','dateTime']
+        primaryKey: 'id'
+        filters: ["magnitude=?"]
+        bindValues: [magnitudeKey]
+        sort: 'id DESC'
     }
 
     RowLayout {
@@ -82,14 +86,14 @@ Rectangle {
                     Layout.maximumWidth: contentWidth
                     visible: singleMeasure.state != 'erase'
                     verticalAlignment: Text.AlignVCenter
-                    text: model.dateTime
+                    text: (model.dateTime)?model.dateTime:''
                     color: '#848484'
                 }
                 Button {
                     visible: singleMeasure.state == 'erase'
                     text: qsTr('Elimina')
                     onClicked: {
-                        if (measuresModel.removeObjectWithKeyValue(model.id)) {
+                        if (measuresModel.removeObject(model.id)) {
                             singleMeasure.state = 'measure';
                             measuresModel.select();
                         }
@@ -115,6 +119,7 @@ Rectangle {
         if (measuresModel.insertObject({value: newValue.text, magnitude: magnitudeKey, dateTime: dt.toISOString()})) {
             newValue.text = "";
             Qt.inputMethod.hide();
+            measuresModel.select();
         }
     }
 }

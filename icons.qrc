@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/add-159647.svg</file>
+        <file>icons/iconlicenses.txt</file>
+    </qresource>
+</RCC>

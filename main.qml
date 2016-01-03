@@ -21,6 +21,8 @@ Window {
     SqlTableModel {
         id: magnitudes
         tableName: 'magnitudes'
+        primaryKey: 'id'
+        fieldNames: ['id','title','desc']
     }
 
     ColumnLayout {
@@ -28,6 +30,7 @@ Window {
         anchors.margins: units.nailUnit
 
         Text {
+            color: 'orange'
             text: 'BeFit'
             font.pixelSize: units.readUnit
             font.bold: true
@@ -39,12 +42,19 @@ Window {
             Layout.fillWidth: true
             clip: true
 
+            property int optionsRowHeight: units.fingerUnit * 2 + addMagnitudeButton.margins * 2
+
+            bottomMargin: optionsRowHeight
+
             model: magnitudes
             delegate: MagnitudeViewer {
                 width: magnitudesList.width
                 key: id
                 title: model.title
                 isCurrentMagnitude: ListView.isCurrentItem
+
+                magnitudesModel: magnitudes
+
                 onMagnitudeSelected: {
                     magnitudesList.currentIndex = model.index;
                     for (var i=0; i<magnitudesList.contentItem.children.length; i++) {
@@ -59,32 +69,64 @@ Window {
                     magnitudes.updateObject({id: key, title:title});
                 }
             }
-        }
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: units.fingerUnit * 1.5
-            RowLayout {
-                anchors.fill: parent
-                TextField {
-                    id: title
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    onEditingFinished: if (text != "") insertMagnitude()
+            Common.SuperposedButton {
+                id: addMagnitudeButton
+
+                anchors {
+                    right: parent.right
+                    bottom: parent.bottom
                 }
-                Button {
-                    Layout.fillHeight: true
-                    text: qsTr('Crea')
-                    onClicked: insertMagnitude()
-                }
+
+                backgroundColor: 'orange'
+                imageSource: 'add-159647'
+                size: magnitudesList.optionsRowHeight
+                onClicked: createItem.enabled = true
             }
         }
+    }
 
+    Item {
+        id: createItem
+
+        visible: createItem.enabled
+        enabled: false
+
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+        }
+        height: magnitudesList.optionsRowHeight
+
+        RowLayout {
+            anchors.fill: parent
+            TextField {
+                id: title
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                onEditingFinished: if (text != "") insertMagnitude()
+            }
+            Button {
+                Layout.fillHeight: true
+                text: qsTr('Crea')
+                onClicked: insertMagnitude()
+            }
+            Button {
+                Layout.fillHeight: true
+                text: qsTr('Cancela')
+                onClicked: createItem.enabled = false
+            }
+        }
     }
 
     function insertMagnitude() {
-        if (magnitudes.insertObject({title: title.text})) {
-            title.text = "";
-            Qt.inputMethod.hide();
+        if (title.text !== '') {
+            if (magnitudes.insertObject({title: title.text})) {
+                createItem.enabled = false;
+                title.text = "";
+                Qt.inputMethod.hide();
+                magnitudes.select();
+            }
         }
     }
 

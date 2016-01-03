@@ -4,10 +4,11 @@ QT += qml quick sql
 
 SOURCES += main.cpp \
     databasebackup.cpp \
-    sqltablemodel.cpp
+    SqlTableModel/sqltablemodel.cpp
 
 RESOURCES += qml.qrc \
-    common.qrc
+    common.qrc \
+    icons.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -17,4 +18,10 @@ include(deployment.pri)
 
 HEADERS += \
     databasebackup.h \
-    sqltablemodel.h
+    SqlTableModel/sqltablemodel.h
+
+DISTFILES += \
+    android/AndroidManifest.xml
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+

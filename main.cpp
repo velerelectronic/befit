@@ -6,7 +6,7 @@
 #include <QtQml>
 
 #include "databasebackup.h"
-#include "sqltablemodel.h"
+#include "SqlTableModel/sqltablemodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     qmlRegisterType<DatabaseBackup>("PersonalTypes", 1, 0, "DatabaseBackup");
-    qmlRegisterType<SqlTableModel>("PersonalTypes", 1, 0, "SqlTableModel");
+    qmlRegisterType<SqlTableModel2>("PersonalTypes", 1, 0, "SqlTableModel");
 
     QString specificPath("BeFit");
     QDir dir(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation));
@@ -27,6 +27,9 @@ int main(int argc, char *argv[])
     if (dir.cd(specificPath)) {
         db = QSqlDatabase::addDatabase("QSQLITE");
         db.setDatabaseName(dir.absolutePath() + "/mainDatabase.sqlite");
+        if (db.open()) {
+            qDebug() << "Database opened!";
+        }
     }
 
     engine.load(QUrl(QStringLiteral("qrc:///main.qml")));

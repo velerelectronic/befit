@@ -1,6 +1,8 @@
 import QtQuick 2.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.1
+
+import PersonalTypes 1.0
 import 'qrc:///common' as Common
 
 Rectangle {
@@ -12,6 +14,8 @@ Rectangle {
 
     signal changeMagnitudeTitle(string title)
     signal magnitudeSelected()
+
+    property SqlTableModel magnitudesModel
 
     states: [
         State {
@@ -123,8 +127,8 @@ Rectangle {
             text: qsTr('Elimina')
             visible: magnitudeViewer.state == 'erase'
             onClicked: {
-                magnitudes.removeObjectWithKeyValue(key);
-                magnitudes.select();
+                magnitudesModel.removeObject(key);
+                magnitudesModel.select();
             }
         }
         Button {
