@@ -1,6 +1,9 @@
 TEMPLATE = app
 
-QT += qml quick sql
+QT += qml \
+    quick \
+    xml xmlpatterns svg \
+    sql
 
 SOURCES += main.cpp \
     databasebackup.cpp \

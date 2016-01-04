@@ -72,10 +72,13 @@ Window {
             Common.SuperposedButton {
                 id: addMagnitudeButton
 
+                visible: enabled
+                enabled: !createItem.enabled
                 anchors {
                     right: parent.right
                     bottom: parent.bottom
                 }
+                margins: units.nailUnit
 
                 backgroundColor: 'orange'
                 imageSource: 'add-159647'
@@ -85,7 +88,7 @@ Window {
         }
     }
 
-    Item {
+    Rectangle {
         id: createItem
 
         visible: createItem.enabled
@@ -100,11 +103,12 @@ Window {
 
         RowLayout {
             anchors.fill: parent
+            anchors.margins: units.nailUnit
             TextField {
                 id: title
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                onEditingFinished: if (text != "") insertMagnitude()
+                onEditingFinished: insertMagnitude()
             }
             Button {
                 Layout.fillHeight: true
