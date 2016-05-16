@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>models/MagnitudesModel.qml</file>
+        <file>models/MeasuresModel.qml</file>
+    </qresource>
+</RCC>

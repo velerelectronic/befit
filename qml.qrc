@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>MagnitudeViewer.qml</file>
-        <file>MeasuresViewer.qml</file>
     </qresource>
 </RCC>

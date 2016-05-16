@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>common/UseUnits.qml</file>
         <file>common/SuperposedButton.qml</file>
+        <file>common/HorizontalStaticMenu.qml</file>
+        <file>common/BasicSection.qml</file>
     </qresource>
 </RCC>

@@ -1,23 +1,26 @@
-import QtQuick 2.2
+import QtQuick 2.5
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.1
 import PersonalTypes 1.0
+import 'qrc:///common' as Common
+import 'qrc:///models' as Models
+import 'qrc:///components' as Components
 
 Rectangle {
     id: measuresViewer
     width: 100
     property int requiredHeight: insertButtons.height + measuresList.height + units.nailUnit
-    property int magnitudeKey
+    property int magnitude
+
+    property int measuresCount: measuresModel.count
 
     color: 'transparent'
 
-    SqlTableModel {
+    Models.MeasuresModel {
         id: measuresModel
-        tableName: 'measures'
-        fieldNames: ['id','magnitude','value','dateTime']
-        primaryKey: 'id'
+
         filters: ["magnitude=?"]
-        bindValues: [magnitudeKey]
+        bindValues: [magnitude]
         sort: 'id DESC'
     }
 
@@ -116,7 +119,7 @@ Rectangle {
 
     function insertMeasure() {
         var dt = new Date();
-        if (measuresModel.insertObject({value: newValue.text, magnitude: magnitudeKey, dateTime: dt.toISOString()})) {
+        if (measuresModel.insertObject({value: newValue.text, magnitude: magnitude, dateTime: dt.toISOString()})) {
             newValue.text = "";
             Qt.inputMethod.hide();
             measuresModel.select();
